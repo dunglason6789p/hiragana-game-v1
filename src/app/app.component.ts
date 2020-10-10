@@ -1,6 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {HIRADB, HiraRow} from './hiraganaDB';
 
+interface WrongAnsCount {
+  hira: string;
+  wrongCount: number;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,8 +26,10 @@ export class AppComponent implements OnInit {
   updateTime(): void{
     if (this.timeLeftPercent <= 0) {
       if (!this.alerted) {
+        this.saveWrongAnswer();
         alert(':' + this.hiraEntry.pronounce);
         this.alerted = true;
+        window.location.reload();
       }
     } else {
       this.timeLeftPercent -= 100 * this.intervalTimeMs / this.maxTimeLeftMs;
@@ -62,6 +69,46 @@ export class AppComponent implements OnInit {
     this.answerInputElm.value = '';
     this.resetTimeLeftPercent();
     this.setRandomHiraText();
+  }
+  // tslint:disable-next-line:variable-name
+  readonly lsKey_wrongs = 'WRONGS';
+  saveWrongAnswer(): void {
+    let lsVal = localStorage.getItem(this.lsKey_wrongs);
+    if (lsVal == null) {
+      lsVal = '{}';
+    }
+    const wrongs = JSON.parse(lsVal);
+    let currentCount: number = Number(wrongs[this.hiraEntry.hira]);
+    if (typeof currentCount !== 'number' || isNaN(currentCount)) {
+      currentCount = 0;
+    }
+    wrongs[this.hiraEntry.hira] = currentCount + 1;
+    localStorage.setItem(this.lsKey_wrongs, JSON.stringify(wrongs));
+  }
+  savedWrongAnswers: WrongAnsCount[] = [];
+  loadWrongAwnser(): void {
+    const lsVal = localStorage.getItem(this.lsKey_wrongs);
+    const arr: WrongAnsCount[] = [];
+    if (lsVal != null) {
+      const wrongs = JSON.parse(lsVal);
+      for (const hira in wrongs) {
+        if (wrongs.hasOwnProperty(hira)) {
+          const wrongCount = wrongs[hira];
+          if (typeof wrongCount === 'number') {
+            arr.push({hira, wrongCount});
+          }
+        }
+      }
+    }
+    arr.sort((item1, item2) => {
+      return item1.wrongCount - item2.wrongCount;
+    });
+    const newArr: WrongAnsCount[] = [];
+    const pushCount = Math.min(5, newArr.length);
+    for (let i = 0; i < pushCount; i++){
+      newArr.push(arr[i]);
+    }
+    this.savedWrongAnswers = newArr;
   }
 }
 function randomIntFromInterval(min, max): number { // min and max inclusive.

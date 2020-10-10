@@ -17,6 +17,14 @@
       {{this.timeLeftPercent}}
     </span>
   </div>
+  <div style="height: 50px;"></div>
+  <div>
+    <ul>
+      <li *ngFor="let savedWrongAnswer of savedWrongAnswers">
+        {{savedWrongAnswer.hira}}: {{savedWrongAnswer.wrongCount}}
+      </li>
+    </ul>
+  </div>
 </div>
 
 
