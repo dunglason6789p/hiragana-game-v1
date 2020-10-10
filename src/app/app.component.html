@@ -4,7 +4,19 @@
 
 <!-- Toolbar -->
 <div class="content" role="main">
-  <div style="height: 50px; background-color: red" [style.width]="timeLeftPercentCss">{{this.timeLeftPercent}}</div>
+  <div style="width: 100px; margin: auto">
+    <span style="font-size: 50px">{{hiraEntry.hira}}</span>
+  </div>
+  <div style="width: 100px; margin: auto">
+    <input id="eid_answerInput" type="text" (keyup)="checkAnswerInput()" [style]="{color: warnWrongAnswer ? 'red' : 'black'}"/>
+  </div>
+  <div style="height: 50px;"></div>
+  <div style="height: 50px; margin: auto" [style]="{width: maxLenTimeLeftCssNum + 'px'}">
+    <div style="height: 50px; background-color: red" [style.width]="timeLeftPercentCss"></div>
+    <span style="display: none/*block*/; width: 35px; font-size: 30px; margin: auto;">
+      {{this.timeLeftPercent}}
+    </span>
+  </div>
 </div>
 
 

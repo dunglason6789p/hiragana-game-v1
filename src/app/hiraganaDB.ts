@@ -6,7 +6,7 @@ export class HiraRow {
     this.pronounce = pronounce;
   }
 }
-export const hiraganaDB: HiraRow[] = [
+export const HIRADB: HiraRow[] = [
   new HiraRow('あ', 'a'),
   new HiraRow('え', 'e'),
   new HiraRow('い', 'i'),
