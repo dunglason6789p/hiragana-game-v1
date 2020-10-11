@@ -27,7 +27,7 @@ export const HIRADB: HiraRow[] = [
 
   new HiraRow('た', 'ta'),
   new HiraRow('て', 'te'),
-  new HiraRow('ち', 'ti'),
+  new HiraRow('ち', 'chi'),
   new HiraRow('と', 'to'),
   new HiraRow('つ', 'tsu'),
 

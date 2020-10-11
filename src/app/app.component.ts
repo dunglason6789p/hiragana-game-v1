@@ -13,7 +13,8 @@ interface WrongAnsCount {
 })
 export class AppComponent implements OnInit {
   title = 'hiragana-game-v1';
-  readonly maxTimeLeftMs = 5000;
+  isGameOver = false;
+  readonly maxTimeLeftMs = 3000;
   readonly intervalTimeMs = 100;
   timeLeftPercent = 100;
   resetTimeLeftPercent(): void {
@@ -26,13 +27,16 @@ export class AppComponent implements OnInit {
   score = 0;
   updateTime(): void{
     if (this.timeLeftPercent <= 0) {
-      if (!this.alerted) {
-        alert(this.hiraEntry.hira + ' : ' + this.hiraEntry.pronounce);
-        this.alerted = true;
-        this.saveWrongAnswer();
-        this.saveHighScore();
-        window.location.reload();
-      }
+      this.isGameOver = true;
+      setTimeout(() => {
+        if (!this.alerted) {
+          alert(this.hiraEntry.hira + ' : ' + this.hiraEntry.pronounce);
+          this.alerted = true;
+          this.saveWrongAnswer();
+          this.saveHighScore();
+          window.location.reload();
+        }
+      }, 100);
     } else {
       this.timeLeftPercent -= 100 * this.intervalTimeMs / this.maxTimeLeftMs;
       this.timeLeftPercentCss = Math.round(this.maxLenTimeLeftCssNum * this.timeLeftPercent / 100) + 'px';
