@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
     }
   }
   ngOnInit(): void{
+    this.loadWrongAnswer();
     this.answerInputElm = document.querySelector('#eid_answerInput');
     // always focus.
     this.answerInputElm.focus();
@@ -86,7 +87,7 @@ export class AppComponent implements OnInit {
     localStorage.setItem(this.lsKey_wrongs, JSON.stringify(wrongs));
   }
   savedWrongAnswers: WrongAnsCount[] = [];
-  loadWrongAwnser(): void {
+  loadWrongAnswer(): void {
     const lsVal = localStorage.getItem(this.lsKey_wrongs);
     const arr: WrongAnsCount[] = [];
     if (lsVal != null) {
@@ -104,7 +105,7 @@ export class AppComponent implements OnInit {
       return item1.wrongCount - item2.wrongCount;
     });
     const newArr: WrongAnsCount[] = [];
-    const pushCount = Math.min(5, newArr.length);
+    const pushCount = Math.min(5, arr.length);
     for (let i = 0; i < pushCount; i++){
       newArr.push(arr[i]);
     }
