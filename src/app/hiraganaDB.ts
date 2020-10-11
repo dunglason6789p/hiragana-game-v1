@@ -1,9 +1,11 @@
 export class HiraRow {
   hira: string;
   pronounce: string;
-  constructor(hira: string, pronounce: string){
+  pronounceAlt: string;
+  constructor(hira: string, pronounce: string, pronounceAlt: string = null){
     this.hira = hira;
     this.pronounce = pronounce;
+    this.pronounceAlt = pronounceAlt;
   }
 }
 export const HIRADB: HiraRow[] = [
@@ -23,7 +25,7 @@ export const HIRADB: HiraRow[] = [
   new HiraRow('へ', 'he'),
   new HiraRow('ひ', 'hi'),
   new HiraRow('ほ', 'ho'),
-  new HiraRow('ふ', 'fu'),
+  new HiraRow('ふ', 'fu', 'hu'),
 
   new HiraRow('た', 'ta'),
   new HiraRow('て', 'te'),
@@ -33,9 +35,9 @@ export const HIRADB: HiraRow[] = [
 
   new HiraRow('さ', 'sa'),
   new HiraRow('せ', 'se'),
-  new HiraRow('し', 'shi'),
+  new HiraRow('し', 'shi', 'si'),
   new HiraRow('そ', 'so'),
-  new HiraRow('す', 'su'),
+  new HiraRow('す', 'su', 'shu'),
 
   new HiraRow('ま', 'ma'),
   new HiraRow('め', 'me'),
@@ -75,18 +77,18 @@ export const HIRADB: HiraRow[] = [
 
   new HiraRow('だ', 'da'),
   new HiraRow('で', 'de'),
-  new HiraRow('ぢ', 'dji'),
+  new HiraRow('ぢ', 'dji', 'di'),
   new HiraRow('ど', 'do'),
-  new HiraRow('づ', 'dzu'),
+  new HiraRow('づ', 'dzu', 'du'),
 
   new HiraRow('ざ', 'za'),
   new HiraRow('ぜ', 'ze'),
-  new HiraRow('じ', 'ji'),
+  new HiraRow('じ', 'ji', 'zi'),
   new HiraRow('ぞ', 'zo'),
   new HiraRow('ず', 'zu'),
 
   new HiraRow('わ', 'wa'),
-  new HiraRow('を', 'o'),
+  new HiraRow('を', 'o', 'wo'),
 
   new HiraRow('や', 'ya'),
   new HiraRow('よ', 'yo'),

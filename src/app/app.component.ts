@@ -14,6 +14,7 @@ interface WrongAnsCount {
 export class AppComponent implements OnInit {
   title = 'hiragana-game-v1';
   isGameOver = false;
+  readonly allowAltPron = true;
   readonly maxTimeLeftMs = 3000;
   readonly intervalTimeMs = 100;
   timeLeftPercent = 100;
@@ -70,8 +71,14 @@ export class AppComponent implements OnInit {
   checkAnswerInput(): void{
     const answerText = this.answerInputElm.value;
     const currentHiraPron = this.hiraEntry.pronounce;
-    this.warnWrongAnswer = !currentHiraPron.startsWith(answerText);
-    if (answerText === currentHiraPron) {
+    this.warnWrongAnswer = !(
+      currentHiraPron.startsWith(answerText)
+      || (this.allowAltPron && this.hiraEntry.pronounceAlt != null && this.hiraEntry.pronounceAlt.startsWith(answerText))
+    );
+    if (
+      currentHiraPron === answerText
+      || (this.allowAltPron && this.hiraEntry.pronounceAlt != null && this.hiraEntry.pronounceAlt === answerText)
+    ) {
       this.nextQuestion();
     }
   }

@@ -12,7 +12,9 @@
   </div>
   <div style="width: 150px; margin: auto" [ngStyle]="{display: isGameOver ? 'block' : 'none'}">
     <span style="font-size: 50px">
-      {{hiraEntry.hira}} : {{hiraEntry.pronounce}}
+      {{hiraEntry.hira}} : {{hiraEntry.pronounce}}{{
+        hiraEntry.pronounceAlt != null ? '/'+hiraEntry.pronounceAlt : ''
+      }}
     </span>
   </div>
   <div style="width: 100px; margin: auto">
