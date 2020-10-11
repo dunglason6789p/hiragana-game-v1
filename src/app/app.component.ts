@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   timeLeftPercentCss = '0px';
   alerted = false;
   answerInputElm: HTMLInputElement = null;
-  score = 0;
+  score = -1;
   updateTime(): void{
     if (this.timeLeftPercent <= 0) {
       this.isGameOver = true;
@@ -34,7 +34,9 @@ export class AppComponent implements OnInit {
           this.alerted = true;
           this.saveWrongAnswer();
           this.saveHighScore();
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 100);
         }
       }, 100);
     } else {
@@ -74,10 +76,12 @@ export class AppComponent implements OnInit {
     }
   }
   nextQuestion(): void {
-    this.score++;
-    this.answerInputElm.value = '';
-    this.resetTimeLeftPercent();
-    this.setRandomHiraText();
+    if (!this.isGameOver) {
+      this.score++;
+      this.answerInputElm.value = '';
+      this.resetTimeLeftPercent();
+      this.setRandomHiraText();
+    }
   }
   // tslint:disable-next-line:variable-name
   readonly lsKey_wrongs = 'WRONGS';
@@ -137,8 +141,8 @@ export class AppComponent implements OnInit {
     if (typeof highScoreLoaded !== 'number' || isNaN(highScoreLoaded)) {
       highScoreLoaded = 0;
     }
-    if (this.highScore > highScoreLoaded) {
-      localStorage.setItem(this.lsKey_highscore, this.highScore + '');
+    if (this.score >= highScoreLoaded) {
+      localStorage.setItem(this.lsKey_highscore, this.score + '');
     }
   }
 }
