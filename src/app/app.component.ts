@@ -13,7 +13,7 @@ interface WrongAnsCount {
 })
 export class AppComponent implements OnInit {
   title = 'hiragana-game-v1';
-  readonly maxTimeLeftMs = 10000;
+  readonly maxTimeLeftMs = 5000;
   readonly intervalTimeMs = 100;
   timeLeftPercent = 100;
   resetTimeLeftPercent(): void {
@@ -23,12 +23,14 @@ export class AppComponent implements OnInit {
   timeLeftPercentCss = '0px';
   alerted = false;
   answerInputElm: HTMLInputElement = null;
+  score = 0;
   updateTime(): void{
     if (this.timeLeftPercent <= 0) {
       if (!this.alerted) {
-        this.saveWrongAnswer();
         alert(':' + this.hiraEntry.pronounce);
         this.alerted = true;
+        this.saveWrongAnswer();
+        this.saveHighScore();
         window.location.reload();
       }
     } else {
@@ -38,6 +40,7 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(): void{
     this.loadWrongAnswer();
+    this.loadHighScore();
     this.answerInputElm = document.querySelector('#eid_answerInput');
     // always focus.
     this.answerInputElm.focus();
@@ -67,12 +70,15 @@ export class AppComponent implements OnInit {
     }
   }
   nextQuestion(): void {
+    this.score++;
     this.answerInputElm.value = '';
     this.resetTimeLeftPercent();
     this.setRandomHiraText();
   }
   // tslint:disable-next-line:variable-name
   readonly lsKey_wrongs = 'WRONGS';
+  // tslint:disable-next-line:variable-name
+  readonly lsKey_highscore = 'HIGHSCORE';
   saveWrongAnswer(): void {
     let lsVal = localStorage.getItem(this.lsKey_wrongs);
     if (lsVal == null) {
@@ -87,6 +93,7 @@ export class AppComponent implements OnInit {
     localStorage.setItem(this.lsKey_wrongs, JSON.stringify(wrongs));
   }
   savedWrongAnswers: WrongAnsCount[] = [];
+  readonly MAX_SHOW_WRONG_ANS = 10;
   loadWrongAnswer(): void {
     const lsVal = localStorage.getItem(this.lsKey_wrongs);
     const arr: WrongAnsCount[] = [];
@@ -105,11 +112,30 @@ export class AppComponent implements OnInit {
       return item1.wrongCount - item2.wrongCount;
     });
     const newArr: WrongAnsCount[] = [];
-    const pushCount = Math.min(5, arr.length);
+    const pushCount = Math.min(this.MAX_SHOW_WRONG_ANS, arr.length);
     for (let i = 0; i < pushCount; i++){
       newArr.push(arr[i]);
     }
     this.savedWrongAnswers = newArr;
+  }
+  highScore = 0;
+  loadHighScore(): void {
+    const lsVal = localStorage.getItem(this.lsKey_highscore);
+    let highScoreLoaded = Number(lsVal);
+    if (typeof highScoreLoaded !== 'number' || isNaN(highScoreLoaded)) {
+      highScoreLoaded = 0;
+    }
+    this.highScore = highScoreLoaded;
+  }
+  saveHighScore(): void {
+    const lsVal = localStorage.getItem(this.lsKey_highscore);
+    let highScoreLoaded = Number(lsVal);
+    if (typeof highScoreLoaded !== 'number' || isNaN(highScoreLoaded)) {
+      highScoreLoaded = 0;
+    }
+    if (this.highScore > highScoreLoaded) {
+      localStorage.setItem(this.lsKey_highscore, this.highScore + '');
+    }
   }
 }
 function randomIntFromInterval(min, max): number { // min and max inclusive.
