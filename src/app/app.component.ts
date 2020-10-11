@@ -27,7 +27,7 @@ export class AppComponent implements OnInit {
   updateTime(): void{
     if (this.timeLeftPercent <= 0) {
       if (!this.alerted) {
-        alert(':' + this.hiraEntry.pronounce);
+        alert(this.hiraEntry.hira + ' : ' + this.hiraEntry.pronounce);
         this.alerted = true;
         this.saveWrongAnswer();
         this.saveHighScore();
@@ -109,7 +109,7 @@ export class AppComponent implements OnInit {
       }
     }
     arr.sort((item1, item2) => {
-      return item1.wrongCount - item2.wrongCount;
+      return -(item1.wrongCount - item2.wrongCount);
     });
     const newArr: WrongAnsCount[] = [];
     const pushCount = Math.min(this.MAX_SHOW_WRONG_ANS, arr.length);
