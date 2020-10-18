@@ -1,11 +1,9 @@
 export class PronRow {
-  hira: string;
-  kata: string;
+  char: string;
   pronounce: string;
   pronounceAlt: string;
-  constructor(hira: string, kata: string, pronounce: string, pronounceAlt: string = null){
-    this.hira = hira;
-    this.kata = kata;
+  constructor(char: string, pronounce: string, pronounceAlt: string = null){
+    this.char = char;
     this.pronounce = pronounce;
     this.pronounceAlt = pronounceAlt;
   }

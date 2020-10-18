@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {PronRow} from './PronRow';
 import {HIRADB} from './hiraganaDB';
+import {KATADB} from './katakanaDB';
 
 interface WrongAnsCount {
-  hira: string;
+  char: string;
   wrongCount: number;
 }
 
@@ -14,6 +15,7 @@ interface WrongAnsCount {
 })
 export class AppComponent implements OnInit {
   title = 'hiragana-game-v1';
+  totalQuestSet: PronRow[] = [];
   isGameOver = false;
   readonly allowAltPron = true;
   readonly maxTimeLeftMs = 3000;
@@ -32,7 +34,7 @@ export class AppComponent implements OnInit {
       this.isGameOver = true;
       setTimeout(() => {
         if (!this.alerted) {
-          alert(this.hiraEntry.hira + ' : ' + this.hiraEntry.pronounce);
+          alert(this.pronRowEntry.char + ' : ' + this.pronRowEntry.pronounce);
           this.alerted = true;
           this.saveWrongAnswer();
           this.saveHighScore();
@@ -46,7 +48,11 @@ export class AppComponent implements OnInit {
       this.timeLeftPercentCss = Math.round(this.maxLenTimeLeftCssNum * this.timeLeftPercent / 100) + 'px';
     }
   }
+  loadQuestSet(): void {
+    this.totalQuestSet = HIRADB.concat(KATADB);
+  }
   ngOnInit(): void{
+    this.loadQuestSet();
     this.loadWrongAnswer();
     this.loadHighScore();
     this.answerInputElm = document.querySelector('#eid_answerInput');
@@ -54,7 +60,7 @@ export class AppComponent implements OnInit {
     this.answerInputElm.focus();
     this.answerInputElm.onblur = () => {
       setTimeout(() => {
-          this.answerInputElm.focus();
+        this.answerInputElm.focus();
       });
     };
     setInterval(() => {
@@ -63,22 +69,21 @@ export class AppComponent implements OnInit {
     this.nextQuestion();
   }
 
-  hiraEntry: PronRow = new PronRow('?', '?', '?');
-  setRandomHiraText(): void {
-    const HIRADB_LEN = HIRADB.length;
-    this.hiraEntry = randomMemberOf(HIRADB);
+  pronRowEntry: PronRow = new PronRow('?', '?', '?');
+  setRandomPronRowEntry(): void {
+    this.pronRowEntry = randomMemberOf(this.totalQuestSet);
   }
   warnWrongAnswer = false;
   checkAnswerInput(): void{
     const answerText = this.answerInputElm.value;
-    const currentHiraPron = this.hiraEntry.pronounce;
+    const currentPronRowEntry = this.pronRowEntry.pronounce;
     this.warnWrongAnswer = !(
-      currentHiraPron.startsWith(answerText)
-      || (this.allowAltPron && this.hiraEntry.pronounceAlt != null && this.hiraEntry.pronounceAlt.startsWith(answerText))
+      currentPronRowEntry.startsWith(answerText)
+      || (this.allowAltPron && this.pronRowEntry.pronounceAlt != null && this.pronRowEntry.pronounceAlt.startsWith(answerText))
     );
     if (
-      currentHiraPron === answerText
-      || (this.allowAltPron && this.hiraEntry.pronounceAlt != null && this.hiraEntry.pronounceAlt === answerText)
+      currentPronRowEntry === answerText
+      || (this.allowAltPron && this.pronRowEntry.pronounceAlt != null && this.pronRowEntry.pronounceAlt === answerText)
     ) {
       this.nextQuestion();
     }
@@ -88,24 +93,26 @@ export class AppComponent implements OnInit {
       this.score++;
       this.answerInputElm.value = '';
       this.resetTimeLeftPercent();
-      this.setRandomHiraText();
+      this.setRandomPronRowEntry();
     }
   }
   // tslint:disable-next-line:variable-name
   readonly lsKey_wrongs = 'WRONGS';
   // tslint:disable-next-line:variable-name
   readonly lsKey_highscore = 'HIGHSCORE';
+  // tslint:disable-next-line:variable-name
+  readonly lsKey_highscore_lastDate = 'HIGHSCORE_LASTDATE';
   saveWrongAnswer(): void {
     let lsVal = localStorage.getItem(this.lsKey_wrongs);
     if (lsVal == null) {
       lsVal = '{}';
     }
     const wrongs = JSON.parse(lsVal);
-    let currentCount: number = Number(wrongs[this.hiraEntry.hira]);
+    let currentCount: number = Number(wrongs[this.pronRowEntry.char]);
     if (typeof currentCount !== 'number' || isNaN(currentCount)) {
       currentCount = 0;
     }
-    wrongs[this.hiraEntry.hira] = currentCount + 1;
+    wrongs[this.pronRowEntry.char] = currentCount + 1;
     localStorage.setItem(this.lsKey_wrongs, JSON.stringify(wrongs));
   }
   savedWrongAnswers: WrongAnsCount[] = [];
@@ -115,11 +122,11 @@ export class AppComponent implements OnInit {
     const arr: WrongAnsCount[] = [];
     if (lsVal != null) {
       const wrongs = JSON.parse(lsVal);
-      for (const hira in wrongs) {
-        if (wrongs.hasOwnProperty(hira)) {
-          const wrongCount = wrongs[hira];
+      for (const char in wrongs) {
+        if (wrongs.hasOwnProperty(char)) {
+          const wrongCount = wrongs[char];
           if (typeof wrongCount === 'number') {
-            arr.push({hira, wrongCount});
+            arr.push({char, wrongCount});
           }
         }
       }
@@ -135,6 +142,7 @@ export class AppComponent implements OnInit {
     this.savedWrongAnswers = newArr;
   }
   highScore = 0;
+  highScoreLastDate = '';
   loadHighScore(): void {
     const lsVal = localStorage.getItem(this.lsKey_highscore);
     let highScoreLoaded = Number(lsVal);
@@ -142,6 +150,7 @@ export class AppComponent implements OnInit {
       highScoreLoaded = 0;
     }
     this.highScore = highScoreLoaded;
+    this.highScoreLastDate = localStorage.getItem(this.lsKey_highscore_lastDate);
   }
   saveHighScore(): void {
     const lsVal = localStorage.getItem(this.lsKey_highscore);
@@ -151,6 +160,8 @@ export class AppComponent implements OnInit {
     }
     if (this.score >= highScoreLoaded) {
       localStorage.setItem(this.lsKey_highscore, this.score + '');
+      const now = new Date();
+      localStorage.setItem(this.lsKey_highscore_lastDate, `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}-${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`);
     }
   }
 }
