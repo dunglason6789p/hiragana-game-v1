@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {HIRADB, HiraRow} from './hiraganaDB';
+import {PronRow} from './PronRow';
+import {HIRADB} from './hiraganaDB';
 
 interface WrongAnsCount {
   hira: string;
@@ -62,7 +63,7 @@ export class AppComponent implements OnInit {
     this.nextQuestion();
   }
 
-  hiraEntry: HiraRow = new HiraRow('?', '?');
+  hiraEntry: PronRow = new PronRow('?', '?', '?');
   setRandomHiraText(): void {
     const HIRADB_LEN = HIRADB.length;
     this.hiraEntry = randomMemberOf(HIRADB);
